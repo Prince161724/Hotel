@@ -1,0 +1,59 @@
+body.html{
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.green{
+  height:auto;
+  width:80vw;
+  margin-bottom:2rem;
+  padding-left:3rem;
+  padding-top:3rem;
+  padding-bottom:3rem;
+  display:grid;
+  grid-template-columns:repeat(3,auto);
+  grid-row:auto;
+  row-gap:1.7rem;
+  /* overflow:auto; */
+  border:2px solid red;
+  place-items:center;
+  
+}
+.card-green{
+  aspect-ratio:1/1;
+  width:80%;
+}
+.container-of-favourite{
+  
+}
+.oImage{
+height:100%;
+width:100%  
+}
+.oImage-div{
+height:80%;
+width:80%
+}
+.Home-Name{
+position:relative;
+  width:9rem;
+  left:4rem;
+}
+.Home-price{
+position:relative;
+  width:6rem;
+  left:5rem;
+}
+.Favourite-rating{
+  position:relative;
+  display:inline;
+  left:5.4rem;
+}
+h1{
+position:relative;
+left:26rem;
+}
+.BookForFinal{
+  all:unset;
+  background-color:black;
+  color:wheat;
+}

@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Delius+Unicase:wght@400;700&family=Mozilla+Text:wght@200..700&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+.Home{
+  width:100vw;
+  height:100vh;
+  padding:0;
+  margin:0;
+  display:grid;
+  grid-template-columns:repeat(50,1fr);
+  grid-template-rows:repeat(12,1fr);
+  position:relative;
+}
+.Heading{
+  font-family:cursive;
+  font-size:clamp(1rem,4vw,8rem);
+  grid-column:23/29;
+  grid-row:1/2;
+}
+.Navbar{
+  grid-column:1/51;
+  grid-row:2/3;
+}
