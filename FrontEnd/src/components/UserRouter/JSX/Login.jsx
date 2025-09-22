@@ -21,7 +21,10 @@ function Login() {
   const onChange=async (e)=>{
       e.preventDefault();
       console.log("Here is Login value",loginstate);
-      const LoginCheckRes=await LoginCheck(details);
+      let LoginCheckRes;
+      if(details.role){
+        LoginCheckRes=await LoginCheck(details,details.role);
+      }
       console.log("LoginCheckRes =",LoginCheckRes);
       if(LoginCheckRes){
         Navigate("/home");
@@ -56,9 +59,9 @@ function Login() {
           <label htmlFor="password" id="label-password">Enter Your password</label>
           <input type="password" placeholder="Password" name="password" id="password" value={details.password} onChange={onClick}></input>
           <label htmlFor="label-Landlord" id="label-Landlord" name="label-Landlord">Landlord</label>
-          <input type="radio" name="role" id="Landlord" value="Landlord" onChange={onClick}></input>
+          <input type="radio" name="role" id="Landlord" value="host" onChange={onClick} required></input>
           <label htmlFor="label-Renter" id="label-Renter" name="Renter">Renter</label>
-          <input type="radio" value="Renter" name="role" id="label-Renter" onChange={onClick}></input>
+          <input type="radio" value="user" name="role" id="label-Renter" onChange={onClick} required></input>
           <button type="submit" id="button">Submit</button>
         </form>
       </div>

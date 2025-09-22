@@ -14,7 +14,7 @@ const PrivateFavourite=()=>{
       <div className="nameToShow">{favourite.name}</div>
       <div className="PriceToShow">{favourite.price}</div>
       <div className="AddressToShow">{favourite.location[0]} &nbsp; &nbsp;&nbsp; {favourite.location[1]} </div>
-      <img class="Scanner" src="/images-LoginPage/Scanner me.jpg" />
+      <img className="Scanner" src="/images-LoginPage/Scanner me.jpg" />
       </div>
     </div>
   </div>

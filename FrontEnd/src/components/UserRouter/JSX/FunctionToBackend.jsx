@@ -40,9 +40,9 @@ const useBackend = () => {
     }
   };
 
-  const LoginCheck = async (data) => {
+  const LoginCheck = async (data,role) => {
     console.log("The Sent data is here ", data);
-    const url = "http://localhost:3000/user/login";
+    const url = `http://localhost:3000/${role}/Login`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {
