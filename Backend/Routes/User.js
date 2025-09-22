@@ -3,6 +3,8 @@ const UserRouter=express.Router();
 const {Filters,AllHomes,SignUp,Check,Login,Logout,favouritePersonal,GiveAFavourite,RemoveFavList,BookedTobeFinal,AddToBookedInside}=require('../Controller/UserController');
 
 const middleWare=(req,res,next)=>{
+  console.log("Here i can print every");
+  console.log("So here is what should be Renter req url ",req.url);
 return Login(req.body.email,req.body.password,req.body.role)(req,res,next);
 }
 const LogoutCall=(req,res,next)=>{
@@ -27,10 +29,10 @@ return AddToBookedInside(req.session.user.id)(req,res);
 }
 
 
+UserRouter.post('/Login',middleWare);
 UserRouter.get('/AllHomes',AllHomes);
 UserRouter.post('/SignUp',Check,SignUp);
 UserRouter.post('/filters',Filters);
-UserRouter.post('/',middleWare);
 UserRouter.get('/Logout',LogoutCall);
 UserRouter.get('/FavouriteHome/:id',CallFavourite);
 UserRouter.get('/personalfavourite',GiveAllFavourite);

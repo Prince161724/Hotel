@@ -26,7 +26,7 @@ app.use(session({
   resave:false,
   saveUninitialized:false,
   store:MongoStore.create({
-    mongoUrl:'mongodb+srv://root:cmXn1GfALlyvrRMB@hotel.zl9hnzd.mongodb.net/?retryWrites=true&w=majority&appName=Hotel',
+    mongoUrl:'mongodb+srv://root:moot@hotel.zl9hnzd.mongodb.net/?retryWrites=true&w=majority&appName=Hotel',
     collectionName:'sessions'
   }),
   cookie:{
@@ -36,20 +36,28 @@ app.use(session({
   }
 }));
 
-app.use('/',(req,res,next)=>{
-  console.log("This request passed this body");
-  console.log("This request passed this body",req.body);
-  if(req.body.role){
-    if(req.body.role=='Renter'){
-      res.redirect('/user');
-    }
-    else{
-      res.redirect('/Landlord');
-    }
-  }
-  next();
+// app.post('/:role/Login',(req,res,next)=>{
+//   console.log("request for every url is here ",req.url);
+//   if(req.body.role){
+//     if(req.params.role=='user'){
+//       req.body.test="user";
+//       console.log("So here is what should be Renter req url ",req.url);
+//       console.log(req.body);
+//     }
+//     else{
+//       req.body.test="Landlord";
+//     }
+//   }
+//   console.log("So here is what should be printed");
+//   next();
+// })
+app.use('/user',UserRouter);
+app.use('/host',(req,res,next)=>{
+  console.log(req.url);
+  return res.send("Thansk fro ending");
 })
-app.use("/user",UserRouter);
+// app.use("/Landlord",(req,res,next)=>{},Landlord);
+
 //Host Router
 // app.get('/host',HostRouter);
 
