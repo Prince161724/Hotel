@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const Url="mongodb+srv://root:cmXn1GfALlyvrRMB@hotel.zl9hnzd.mongodb.net/?retryWrites=true&w=majority&appName=Hotel";
+const Url="mongodb+srv://root:moot@hotel.zl9hnzd.mongodb.net/?retryWrites=true&w=majority&appName=Hotel";
 
 const connectToMongo=async ()=>{
   await mongoose.connect(Url).then(()=>{
