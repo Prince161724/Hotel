@@ -1,11 +1,12 @@
 import { useState ,useEffect,useContext} from 'react' 
 import '../Css/BookedHomes.css' 
 import {noteContext} from './NoteState/NoteState'
+import { API_BASE_URL } from '../../../config';
 function BookedHomes(){
   const {bookedhome,setBookedhome}=useContext(noteContext);
   useEffect( ()=>{
     const Retur=async ()=>{
-    const url="http://localhost:3000/user/BookedHomes";
+    const url=`${API_BASE_URL}/user/BookedHomes`;
     const response=await fetch(url,{
       method:"GET",
       headers:{
@@ -31,9 +32,10 @@ function BookedHomes(){
    <h1>Your Booked homes</h1> 
    <div className="Large-div">
      {bookedhome.map((home, index) => { 
+      {console.log("Here is home you got ",home)}
       return (
       <div className="BookedHomes-container" key={index}> 
-      <div className="Image-BookedHomes"><img src={home.image} alt="" className="Image-div" /></div>
+      <div className="Image-BookedHomes"><img src={home.photo[0].housePhotos[1]} alt="" className="Image-div" /></div>
       {console.log(home)}
       <div className="Name-BookedHomes">{home.name}</div> 
       <div className="Price-BookedHomes">{home.price}

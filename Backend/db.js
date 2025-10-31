@@ -1,6 +1,7 @@
 const mongoose=require('mongoose');
+require('dotenv').config();
 
-const Url="mongodb+srv://root:moot@hotel.zl9hnzd.mongodb.net/?retryWrites=true&w=majority&appName=Hotel";
+const Url = process.env.MONGO_URI || "mongodb://localhost:27017/hotel";
 
 const connectToMongo=async ()=>{
   await mongoose.connect(Url).then(()=>{
