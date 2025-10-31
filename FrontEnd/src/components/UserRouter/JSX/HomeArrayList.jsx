@@ -21,20 +21,51 @@ function HomeArrayList({pages,setPages}){
       if(localStorage.getItem('priceTotal')) localStorage.removeItem('priceTotal');
     // console.log("HomeArrayList Runs Here Runs Here");
     const fetchData= async ()=>{
-    const url=`${API_BASE_URL}/user/AllHomes`;
-    const response=await fetch(url,{
-      method:"GET",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      credentials:"include"
-    })
-    const res=await response.json();
-    ////console.log("The res That we is",res);
-    const toPassinPage=Math.ceil(res.lengthOfHotels/12)
-    console.log("The Homes are ",res.Hotels);
-    setPages(toPassinPage);
-    setArrayList(res.Hotels);
+      try {
+        const url=`${API_BASE_URL}/user/AllHomes`;
+        const response=await fetch(url,{
+          method:"GET",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          credentials:"include"
+        });
+        
+        // Check response status and content type
+        if (!response.ok) {
+          console.error('Failed to load homes:', response.status);
+          // Server error - try to read error message if JSON
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await response.json();
+            console.error('Server error:', errorData);
+          }
+          return;
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.error('Expected JSON but got:', contentType);
+          const text = await response.text();
+          console.error('Response preview:', text.substring(0, 200));
+          return;
+        }
+        
+        const res = await response.json();
+        
+        if (res.error) {
+          console.error('Server returned error:', res.error);
+          return;
+        }
+        
+        // Safely handle response
+        const toPassinPage = Math.ceil((res.lengthOfHotels || 0) / 12);
+        console.log("The Homes are ", res.Hotels);
+        setPages(toPassinPage);
+        setArrayList(res.Hotels || []);
+      } catch (error) {
+        console.error('Error fetching homes:', error);
+      }
   }
   if(!localStorage.getItem('sentData')){
     // console.log("It is even running now does not matter " );

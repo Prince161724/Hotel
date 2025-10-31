@@ -15,22 +15,53 @@ const Profile = () => {
     });
     console.log(details);
     useEffect(()=>{
-        // const getData=async ()=>{
-        //     const data=await profileInfo();
-        // }
-        // getData();
         const AllHomes=async ()=>{
-          const url=`${API_BASE_URL}/user/ToPopuate`;
-          const response=await fetch(url,{
-            method:"GET",
-            credentials:"include"
-          })
-          const res=await response.json();
-          setDetails(()=>{
-            const updated={favourites:res.favourites,BookedFinal:res.BookedFinal,user:res.user};
-            console.log("User is ",updated.user);
-            return updated;
-          })
+          try {
+            const url=`${API_BASE_URL}/user/ToPopuate`;
+            const response=await fetch(url,{
+              method:"GET",
+              credentials:"include"
+            });
+            
+            // Check if response is OK and is JSON
+            if (!response.ok) {
+              console.error('Failed to load profile data:', response.status);
+              // If unauthorized, user needs to log in again
+              if (response.status === 401) {
+                console.warn('Session expired - please log in again');
+                // You could redirect to login here
+              }
+              return;
+            }
+            
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+              console.error('Expected JSON but got:', contentType);
+              const text = await response.text();
+              console.error('Response body:', text.substring(0, 200));
+              return;
+            }
+            
+            const res = await response.json();
+            
+            // Validate response has expected structure
+            if (res.error) {
+              console.error('Server error:', res.error);
+              return;
+            }
+            
+            setDetails(()=>{
+              const updated={
+                favourites: res.favourites || [],
+                BookedFinal: res.BookedFinal || [],
+                user: res.user || {}
+              };
+              console.log("User is ",updated.user);
+              return updated;
+            });
+          } catch (error) {
+            console.error('Error fetching profile data:', error);
+          }
         }
         AllHomes();
     },[]);
