@@ -23,7 +23,7 @@ const Profile=React.lazy(()=>import('./components/UserRouter/JSX/profile'))
 const FavouriteHomes=React.lazy(()=>import('./components/UserRouter/JSX/FavouriteHomes')) 
 import Login from './components/UserRouter/JSX/Login'
 const BookedHomes=React.lazy(()=>import('./components/UserRouter/JSX/BookedHomes'))
-const SignUp=React.lazy(()=>import('./components/UserRouter/Jsx/SignUp')) 
+const SignUp=React.lazy(()=>import('./components/UserRouter/JSX/SignUp')) 
 const HostInterface=React.lazy(()=>import('./components/HostRouter/JSX/HostInterface'))
 const TotalMessage=React.lazy(()=>import('./components/UserRouter/JSX/TotalMessage')) 
 const TotalMessageHost=React.lazy(()=>import('./components/HostRouter/JSX/TotalMessageHost'))
