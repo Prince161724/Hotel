@@ -5,8 +5,9 @@ import {noteContextSo} from '../JSX/Notestate.jsx'
 import useSend from './FunctionTOBackend.jsx'
 import '../Css/HostInterfaceBell.css'
 import { API_BASE_URL } from '../../../config';
+import { ClipLoader } from 'react-spinners';
 const HoseInterface = () => {
-    const {logincheck,logincheckstate,setLogincheckstate,selectedHome, setSelectedHome,profileHost,setProfileHost,back,setBack} =useContext(noteContextSo);
+    const {logincheck,logincheckstate,setLogincheckstate,selectedHome, setSelectedHome,profileHost,setProfileHost,back,setBack,isUploading} =useContext(noteContextSo);
     const Navigate=useNavigate();
 
     const [uploadedhomes, setUploadedhomes] = useState([]);
@@ -223,6 +224,44 @@ console.log(res.msg);
 }
     return (
             <>
+                {/* Loading Overlay */}
+                {isUploading && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 99999,
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <ClipLoader color="#ffffff" size={80} />
+                        <div style={{
+                            marginTop: '30px',
+                            color: '#ffffff',
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            padding: '0 20px'
+                        }}>
+                            Uploading... Please Do Not Refresh!
+                        </div>
+                        <div style={{
+                            marginTop: '15px',
+                            color: '#cccccc',
+                            fontSize: '16px',
+                            textAlign: 'center',
+                            padding: '0 20px'
+                        }}>
+                            Your files are being uploaded to the cloud
+                        </div>
+                    </div>
+                )}
                         <div className="host-bell-bar">
                             <button className="host-profile-btn" onClick={(e) => {ToNavigate(e)}}>
                                 <span className="profile-icon">👤</span>

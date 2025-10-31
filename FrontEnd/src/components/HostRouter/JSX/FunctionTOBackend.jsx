@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../../../config';
 
 
 const useSend=()=>{
-const  {totalmessages,setTotalmessages,selectedHome, setSelectedHome}=useContext(noteContextSo);
+const  {totalmessages,setTotalmessages,selectedHome, setSelectedHome,isUploading,setIsUploading}=useContext(noteContextSo);
 const [messagesCount,setMessageCount]=useState(0);
     const save=async (body)=>{
         const url=`${API_BASE_URL}/host/save`;
@@ -136,8 +136,10 @@ const [messagesCount,setMessageCount]=useState(0);
   console.log("✅ All uploads done for id:", id);
 }
 async function ToCall(body, id){
+setIsUploading(true); // Start loading
+try {
 await toSend(body, id);
-await new Promise((resolve,reset)=>setTimeout(resolve,50));
+await new Promise((resolve,reset)=>setTimeout(resolve,20));
 console.log("The nEw Home To Send is now ",toReturn);
 const uploadUrl = `${API_BASE_URL}/host/editHome/${id}`;
             const response = await fetch(uploadUrl, {
@@ -149,6 +151,11 @@ const uploadUrl = `${API_BASE_URL}/host/editHome/${id}`;
             });
             const res = await response.json();
             setSelectedHome(res.home);
+            setIsUploading(false); // End loading
+} catch (error) {
+    console.error("Upload error:", error);
+    setIsUploading(false); // End loading even on error
+}
 };
 
     const PersonalFetchAllMEssage=async (Ownername,Owneremail,useremail,role)=>{
