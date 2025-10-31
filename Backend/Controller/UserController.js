@@ -51,17 +51,33 @@ return async(req,res,next)=>{
 
 // To Get All Homes At Starting 
 exports.AllHomes=async (req,res,next)=>{
-const Hotels=await Hotelnames.find();
-const Updated=await User.findById(req.session.user.id);
-const fav=Updated.BookedFinal;
-console.log("The Homes which came in this are ",fav);
-const getUpdated=await Hotelnames.updateMany(
-  {_id:{$in:fav},Booked:{$exists:false}},
-  {$set:{Booked:"yes"}}
-)
-const getu=await Hotelnames.find({_id:{$in:fav}});
-console.log("The updated ones are ",getUpdated);
-res.send({Hotels:Hotels,lengthOfHotels:Hotels.length});
+  try {
+    const Hotels = await Hotelnames.find();
+
+    // If a user session exists, try to mark booked homes for that user.
+    if (req.session && req.session.user && req.session.user.id) {
+      try {
+        const Updated = await User.findById(req.session.user.id);
+        const fav = (Updated && Updated.BookedFinal) ? Updated.BookedFinal : [];
+        // only attempt update if there are favorites
+        if (fav && fav.length > 0) {
+          console.log("The Homes which came in this are ", fav);
+          await Hotelnames.updateMany(
+            { _id: { $in: fav }, Booked: { $exists: false } },
+            { $set: { Booked: "yes" } }
+          );
+        }
+      } catch (innerErr) {
+        // Log but don't fail the whole request — we still return all homes
+        console.log('Warning: failed to update user booked flags:', innerErr.message || innerErr);
+      }
+    }
+
+    return res.status(200).json({ Hotels: Hotels, lengthOfHotels: Hotels.length });
+  } catch (err) {
+    console.error('Error in AllHomes:', err.message || err);
+    return res.status(500).json({ error: 'Server error while fetching homes' });
+  }
 }
 
 
@@ -261,40 +277,57 @@ return res.send({updated:updated});
 }
 
 exports.ToPopulateHome=async (req,res,next)=>{
-const userTo=await User.findById({_id:req.session.user.id});
-return async(req,res,next)=>{
-  const favIds=userTo.favourites.map(item=>item.toString());
-  const BookedFinal=userTo.BookedFinal.map(item=>item.toString());
-  const TosendFav=await Hotelnames.aggregate([
-    {
-      $match:{
-        $expr:{
-          $in:[
-            {$toString:"$_id"},
-            favIds
-          ]
-        }
+  return async(req,res,next)=>{
+    try {
+      // Require authentication for populate endpoint
+      if (!req.session || !req.session.user || !req.session.user.id) {
+        return res.status(401).json({ error: 'Not authenticated' });
       }
-    }
-  ]);
-  const TosendBookedFinal=await Hotelnames.aggregate([
-    {
-      $match:{
-        $expr:{
-          $in:[
-            {$toString:"$_id"},
-            BookedFinal
-          ]
-        }
+
+      const userTo = await User.findById({ _id: req.session.user.id });
+      if (!userTo) {
+        return res.status(404).json({ error: 'User not found' });
       }
+
+      const favIds = (userTo.favourites || []).map(item => item.toString());
+      const BookedFinal = (userTo.BookedFinal || []).map(item => item.toString());
+
+      const TosendFav = await Hotelnames.aggregate([
+        {
+          $match: {
+            $expr: {
+              $in: [
+                { $toString: "$_id" },
+                favIds
+              ]
+            }
+          }
+        }
+      ]);
+
+      const TosendBookedFinal = await Hotelnames.aggregate([
+        {
+          $match: {
+            $expr: {
+              $in: [
+                { $toString: "$_id" },
+                BookedFinal
+              ]
+            }
+          }
+        }
+      ]);
+
+      console.log(TosendFav);
+      console.log(TosendBookedFinal);
+      console.log(userTo);
+      return res.status(200).json({ favourites: TosendFav, BookedFinal: TosendBookedFinal, user: userTo });
+    } catch (err) {
+      console.error('Error in ToPopulateHome:', err.message || err);
+      return res.status(500).json({ error: 'Server error while populating user data' });
     }
-  ])
-  console.log(TosendFav);
-  console.log(TosendBookedFinal);
-  console.log(userTo);
-  return await res.send({favourites:TosendFav,BookedFinal:TosendBookedFinal,user:userTo});
-}
-}
+    }
+  }
 //TO GEt the home etails of a single home 
 exports.getHomeDetail=async (req,res,next)=>{
   //console.log(req.body);
