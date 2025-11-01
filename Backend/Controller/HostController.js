@@ -34,13 +34,24 @@ req.session.user={
     role:user.role,
     email:user.email
 }
-console.log("No it did not came here 2323");
-const compare=await bcrypt.compare(password,user.password);
-const ToComareHash=password===user.password;
-if(compare || ToComareHash){
-    console.log("It came here");
-    return res.send({value:true});
-}
+
+// Explicitly save session to MongoDB store
+req.session.save(async (err) => {
+    if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({value: false, error: 'Failed to create session'});
+    }
+    console.log('Host session saved successfully:', req.session.user);
+    
+    const compare = await bcrypt.compare(password, user.password);
+    const ToComareHash = password === user.password;
+    if (compare || ToComareHash) {
+        console.log("It came here");
+        return res.send({value: true});
+    } else {
+        return res.send({value: false});
+    }
+});
 }
 }
 

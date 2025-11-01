@@ -445,10 +445,16 @@ exports.Login=(email,password,role)=>{
         role:role,
         email:user.email
       };
-      if(req.session.user){
-        //console.log("This is what we wanted ",req.session.user);
-      }
-      return res.json({value:true});
+      
+      // Explicitly save session to MongoDB store
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({value: false, error: 'Failed to create session'});
+        }
+        console.log('Session saved successfully:', req.session.user);
+        return res.json({value:true});
+      });
     }
     else{
       return res.json({value:false});
