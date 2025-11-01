@@ -426,6 +426,13 @@ const UserId=req.session.user.id;
 exports.Login=(email,password,role)=>{
   return async (req,res,next)=>{
     //console.log("The User Credentials are ",req.body);
+    
+    // Check if session already exists
+    if(req.session.user){
+      console.log('User already has active session:', req.session.id, req.session.user);
+      return res.json({value:true, message: 'Already logged in'});
+    }
+    
     const user=await User.findOne({email:email});
     console.log(user);
     const usserId=user._id.toString();
@@ -452,7 +459,7 @@ exports.Login=(email,password,role)=>{
           console.error('Session save error:', err);
           return res.status(500).json({value: false, error: 'Failed to create session'});
         }
-        console.log('Session saved successfully:', req.session.user);
+        console.log('Session saved successfully. Session ID:', req.session.id, 'User:', req.session.user);
         return res.json({value:true});
       });
     }
@@ -531,19 +538,24 @@ exports.BookedTobeFinal=(id)=>{
 
 exports.Logout=(id)=>{
   return (req,res)=>{
-    //console.log("This //console func ran");
+    console.log('Logout called for user ID:', id);
+    console.log('Current session:', req.session);
+    console.log('Session ID:', req.session.id);
+    
     if(req.session.user && req.session.user.id==id){
+      const sessionId = req.session.id;
       req.session.destroy((err) => {
         if(err){
           console.error('Session destroy error:', err);
           return res.status(500).json({result:"Failed to logout", error: err.message});
         }
-        console.log('Session destroyed successfully for user:', id);
+        console.log('Session destroyed successfully. Session ID was:', sessionId);
         res.clearCookie('connect.sid'); // Clear the session cookie
-        return res.json({result:"Deleted session"});
+        return res.json({result:"Deleted session", sessionId: sessionId});
       });
     }
     else{
+      console.log('Logout failed - session mismatch or no session');
       res.status(400).json({result:"Failed to logout - invalid session"});
     }
   }

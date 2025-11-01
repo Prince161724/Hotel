@@ -23,6 +23,13 @@ return res.send({message:"Host created"});
 
 exports.LoginCheck=(email,password)=>{
 return async (req,res,next)=>{
+
+// Check if session already exists
+if(req.session.user){
+    console.log('Host already has active session:', req.session.id, req.session.user);
+    return res.send({value: true, message: 'Already logged in'});
+}
+
 const user=await HostList.findOne({email:email});
 if(!user){
     console.log("No it did not came here");
@@ -38,10 +45,10 @@ req.session.user={
 // Explicitly save session to MongoDB store
 req.session.save(async (err) => {
     if (err) {
-        console.error('Session save error:', err);
+        console.error('Host session save error:', err);
         return res.status(500).json({value: false, error: 'Failed to create session'});
     }
-    console.log('Host session saved successfully:', req.session.user);
+    console.log('Host session saved successfully. Session ID:', req.session.id, 'User:', req.session.user);
     
     const compare = await bcrypt.compare(password, user.password);
     const ToComareHash = password === user.password;
@@ -180,18 +187,24 @@ else{
 
 exports.Logout = (id) => {
   return (req, res) => {
+    console.log('Host logout called for user ID:', id);
+    console.log('Current session:', req.session);
+    console.log('Session ID:', req.session.id);
+    
     if(req.session.user && req.session.user.id == id){
+      const sessionId = req.session.id;
       req.session.destroy((err) => {
         if(err){
           console.error('Host session destroy error:', err);
           return res.status(500).json({result:"Failed to logout", error: err.message});
         }
-        console.log('Host session destroyed successfully for user:', id);
+        console.log('Host session destroyed successfully. Session ID was:', sessionId);
         res.clearCookie('connect.sid'); // Clear the session cookie
-        return res.json({result:"Deleted session"});
+        return res.json({result:"Deleted session", sessionId: sessionId});
       });
     }
     else{
+      console.log('Host logout failed - session mismatch or no session');
       res.status(400).json({result:"Failed to logout - invalid session"});
     }
   }
