@@ -532,12 +532,19 @@ exports.BookedTobeFinal=(id)=>{
 exports.Logout=(id)=>{
   return (req,res)=>{
     //console.log("This //console func ran");
-    if(req.session.user.id==id){
-      req.session.destroy();
-      res.send({result:"Deleted session"})
+    if(req.session.user && req.session.user.id==id){
+      req.session.destroy((err) => {
+        if(err){
+          console.error('Session destroy error:', err);
+          return res.status(500).json({result:"Failed to logout", error: err.message});
+        }
+        console.log('Session destroyed successfully for user:', id);
+        res.clearCookie('connect.sid'); // Clear the session cookie
+        return res.json({result:"Deleted session"});
+      });
     }
     else{
-      res.send({result:"Failed to logout"});
+      res.status(400).json({result:"Failed to logout - invalid session"});
     }
   }
 }

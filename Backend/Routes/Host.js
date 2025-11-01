@@ -1,7 +1,7 @@
 const express=require('express');
 const dotenv=require('dotenv');
 const HostRouter=express.Router();
-const {save,LoginCheck,saveHomes,fetchHomes,editHostHome,HomeDelete,PersonalFetchAllMEssageMessage,getMessagesIntern,messageuserPersonal}=require('../Controller/HostController.js');
+const {save,LoginCheck,saveHomes,fetchHomes,editHostHome,HomeDelete,PersonalFetchAllMEssageMessage,getMessagesIntern,messageuserPersonal,Logout}=require('../Controller/HostController.js');
 dotenv.config();
 const crypto=require('crypto')
 const {upload}=require('../components/upload.js');
@@ -37,6 +37,9 @@ return await getMessagesIntern(req,res,next)(req,res,next);
 }
 const messageuser=async (req,res,next)=>{
   return await messageuserPersonal(req,res,next)(req,res,next);
+}
+const LogoutCall=(req,res,next)=>{
+  return Logout(req.session.user.id)(req,res);
 }
 const getSignature=async (req,res,next)=>{
 const {VideoList,ImagesList,scanners}=req.body;
@@ -98,6 +101,7 @@ res.json({
 return {apikey,cloudName,timestamp,signature,public_id,folder};
 }
 HostRouter.post('/Login',Login);
+HostRouter.get('/Logout',LogoutCall);
 HostRouter.post('/get-Signature',getSignature);
 HostRouter.post('/SignUp',SaveInfo);
 HostRouter.post('/save',saveHomesReq);

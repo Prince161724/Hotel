@@ -178,6 +178,24 @@ else{
 }
 }
 
+exports.Logout = (id) => {
+  return (req, res) => {
+    if(req.session.user && req.session.user.id == id){
+      req.session.destroy((err) => {
+        if(err){
+          console.error('Host session destroy error:', err);
+          return res.status(500).json({result:"Failed to logout", error: err.message});
+        }
+        console.log('Host session destroyed successfully for user:', id);
+        res.clearCookie('connect.sid'); // Clear the session cookie
+        return res.json({result:"Deleted session"});
+      });
+    }
+    else{
+      res.status(400).json({result:"Failed to logout - invalid session"});
+    }
+  }
+}
 
 exports.saveHomes=(req,res,next)=>{
 return async (req)=>{

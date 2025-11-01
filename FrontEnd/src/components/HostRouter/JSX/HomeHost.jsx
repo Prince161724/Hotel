@@ -37,11 +37,27 @@ const HomeHost = () => {
             Navigate('/');
         }
     },[logincheckstate])
-    const LogOut=()=>{
-        localStorage.setItem('loginstate',false);
-        logincheck.current=localStorage.getItem('loginstate');
+    const LogOut = async () => {
+        const url = `${API_BASE_URL}/host/Logout`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: "include"
+            });
+            const res = await response.json();
+            console.log('Host logout response:', res);
+        } catch (error) {
+            console.error('Host logout error:', error);
+        }
+        
+        // Clear localStorage
+        localStorage.setItem('loginstate', false);
+        localStorage.removeItem('UserEmail');
+        localStorage.removeItem('role');
+        logincheck.current = localStorage.getItem('loginstate');
         setLogincheckstate(false);
-        if(localStorage.getItem('loginstate')!="true"){
+        
+        if (localStorage.getItem('loginstate') != "true") {
             window.location.reload(true);
         }
     }

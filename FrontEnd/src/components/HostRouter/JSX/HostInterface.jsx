@@ -97,17 +97,29 @@ const HoseInterface = () => {
         Navigate("/");
         }
     },[logincheckstate]);
-    const onLogOut=(e)=>{
-        localStorage.setItem('loginstate',false);
-        localStorage.removeItem('UserEmail');
-        if (localStorage.getItem('Username')){ localStorage.removeItem('Username')};
-        if (localStorage.getItem('OwnerEmailToFetch')){ localStorage.removeItem('OwnerEmailToFetch')};
-        if (localStorage.getItem('OwnernameToShow')){ localStorage.removeItem('OwnernameToShow')};
-        if (localStorage.getItem('useremailToFetch')){ localStorage.removeItem('useremailToFetch')};
-        if (localStorage.getItem('role')){ localStorage.removeItem('role')};
-        logincheck.current=localStorage.getItem('loginstate');
-        setLogincheckstate(false)
+    const onLogOut = async (e) => {
+        const url = `${API_BASE_URL}/host/Logout`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: "include"
+            });
+            const res = await response.json();
+            console.log('Host logout response:', res);
+        } catch (error) {
+            console.error('Host logout error:', error);
+        }
         
+        // Clear all localStorage items
+        localStorage.setItem('loginstate', false);
+        localStorage.removeItem('UserEmail');
+        if (localStorage.getItem('Username')) { localStorage.removeItem('Username') };
+        if (localStorage.getItem('OwnerEmailToFetch')) { localStorage.removeItem('OwnerEmailToFetch') };
+        if (localStorage.getItem('OwnernameToShow')) { localStorage.removeItem('OwnernameToShow') };
+        if (localStorage.getItem('useremailToFetch')) { localStorage.removeItem('useremailToFetch') };
+        if (localStorage.getItem('role')) { localStorage.removeItem('role') };
+        logincheck.current = localStorage.getItem('loginstate');
+        setLogincheckstate(false)
     }
     const AddMoreHomes=()=>{
         if(logincheck.current=="true"){

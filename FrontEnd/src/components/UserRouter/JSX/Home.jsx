@@ -28,13 +28,19 @@ function Home() {
 
   const ChangeLogin=async ()=>{
     const url=`${API_BASE_URL}/user/Logout`
-    const response=await fetch(url,{
-      method:'GET',
-      credentials:"include"
-    })
-    const res=response.json();
-    localStorage.setItem('loginstate',false);
-    localStorage.removeItem('email');
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        credentials: "include"
+      });
+      const res = await response.json();
+      console.log('Logout response:', res);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    
+    // Clear all localStorage items
+    localStorage.setItem('loginstate', false);
     localStorage.removeItem('email');
     localStorage.removeItem('OwnerEmailToFetch');
     localStorage.removeItem('Owneremail');
