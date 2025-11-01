@@ -42,3 +42,6 @@ coverage/
 *.tmp
 temp/
 tmp/
+
+# Frontend build files (built on deployment)
+public/

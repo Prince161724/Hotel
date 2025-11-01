@@ -12,10 +12,13 @@ const app=express();
 const cors=require('cors');
 const UserRouter=require('./Routes/User');
 
-//This is used to make connection between frontend and backend sometimes what happens frontend or browser blocks the request from any type
+// CORS - In production, frontend is served from same origin
+// In development, allow localhost:5173
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
-  credentials:true
+  origin: process.env.NODE_ENV === 'production' 
+    ? false  // Disable CORS in production (same origin)
+    : "http://localhost:5173",  // Allow Vite dev server in development
+  credentials: true
 }));
 app.use(express.text());
 // FIXED: Add size limits for file uploads
@@ -68,7 +71,7 @@ app.use(session({
     maxAge:24*60*60*1000,
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: 'lax'  // Changed from 'none' - now same-origin since frontend served from backend
   }
 }));
 
@@ -78,6 +81,16 @@ app.use(session({
 
 app.use('/user',UserRouter);
 app.use('/host',HostRouter);
+
+// Serve static files from React build (AFTER API routes)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  // Handle React routing - return index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,(req,res)=>{

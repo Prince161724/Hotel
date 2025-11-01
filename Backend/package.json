@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "build": "cd ../FrontEnd && npm install && npm run build && xcopy /E /I /Y dist ..\\Backend\\public",
+    "build:linux": "cd ../FrontEnd && npm install && npm run build && cp -r dist ../Backend/public"
   },
   "keywords": [],
   "author": "",
