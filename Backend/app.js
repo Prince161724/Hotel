@@ -87,7 +87,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
   
   // Handle React routing - return index.html for all non-API routes
-  app.get('*', (req, res) => {
+  // Express 5 requires regex instead of '*'
+  app.get(/^\/(?!user|host).*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
