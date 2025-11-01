@@ -95,17 +95,27 @@ return res.json({hotels:homes});
 //TOGEt Ttoal messages to show 
 exports.getMessagesIntern= (req,res,next)=>{
 return async (req,res,next)=>{
-const useremail=req.session.user.email;
-const list=await MessageDb.find({"User.email":useremail});
-console.log("List is this ",list);
-if(!list){
-return res.send({list:"Sorry No Messages"});
-}
-else{
-  var counting=0;
-  list.forEach(item=>counting=counting+item.User.newRead-item.User.read);
-  return res.send({list:list,counting:counting});
-}
+  try {
+    // Require authentication
+    if (!req.session || !req.session.user || !req.session.user.email) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    const useremail = req.session.user.email;
+    const list = await MessageDb.find({"User.email": useremail});
+    console.log("List is this ", list);
+    
+    if (!list || list.length === 0) {
+      return res.status(200).json({ list: [], counting: 0 });
+    }
+    
+    var counting = 0;
+    list.forEach(item => counting = counting + item.User.newRead - item.User.read);
+    return res.status(200).json({ list: list, counting: counting });
+  } catch (err) {
+    console.error('Error in getMessagesIntern:', err.message || err);
+    return res.status(500).json({ error: 'Server error while fetching messages' });
+  }
 }
 }
 

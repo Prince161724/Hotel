@@ -124,18 +124,56 @@ const  {totalmessages,setTotalmessages}=useContext(noteContext);
   const [messages, setMessages] = useState(0);
 
     const fetchMessages=async ()=>{
-    const role=localStorage.getItem('role');
-    console.log("Kyu nhi chalega ");
-    const url=`${API_BASE_URL}/${role}/getMessages`;
-    const response=await fetch(url,{
-        method:"GET",
-        credentials:"include"
-    });
-    const res=await response.json();
-    console.log(res.list);
-    console.log("Counting is ",res.counting);
-    setTotalmessages(res.list);
-    setMessages(res.counting);
+      try {
+        const role=localStorage.getItem('role');
+        console.log("Kyu nhi chalega ");
+        const url=`${API_BASE_URL}/${role}/getMessages`;
+        const response=await fetch(url,{
+            method:"GET",
+            credentials:"include"
+        });
+        
+        // Check response status
+        if (!response.ok) {
+          console.error('Failed to fetch messages:', response.status);
+          if (response.status === 401) {
+            console.warn('Not authenticated - please log in');
+          }
+          setTotalmessages([]);
+          setMessages(0);
+          return;
+        }
+        
+        // Validate content type
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.error('Expected JSON but got:', contentType);
+          const text = await response.text();
+          console.error('Response:', text.substring(0, 200));
+          setTotalmessages([]);
+          setMessages(0);
+          return;
+        }
+        
+        const res = await response.json();
+        
+        // Check for errors
+        if (res.error) {
+          console.error('Server error:', res.error);
+          setTotalmessages([]);
+          setMessages(0);
+          return;
+        }
+        
+        console.log(res.list);
+        console.log("Counting is ", res.counting);
+        setTotalmessages(res.list || []);
+        setMessages(res.counting || 0);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        setTotalmessages([]);
+        setMessages(0);
+      }
 }
 
 
