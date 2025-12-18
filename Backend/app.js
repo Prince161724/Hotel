@@ -15,7 +15,10 @@ const UserRouter=require('./Routes/User');
 // CORS - In production, frontend is served from same origin
 // In development, allow localhost:5173
 app.use(cors({
-  origin: "*"
+  origin: "https://hotel-booking-frontend-siip.onrender.com",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.text());
 // FIXED: Add size limits for file uploads
