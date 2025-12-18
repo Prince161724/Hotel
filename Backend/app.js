@@ -15,10 +15,7 @@ const UserRouter=require('./Routes/User');
 // CORS - In production, frontend is served from same origin
 // In development, allow localhost:5173
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? false  // Disable CORS in production (same origin)
-    : "http://localhost:5173",  // Allow Vite dev server in development
-  credentials: true
+  origin: "*"
 }));
 app.use(express.text());
 // FIXED: Add size limits for file uploads
