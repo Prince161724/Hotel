@@ -20,7 +20,7 @@ await host.save();
 return res.send({message:"Host created"});
 }
 }
-
+//Yes i Can Easit Use IT
 exports.LoginCheck=(email,password)=>{
 return async (req,res,next)=>{
 
