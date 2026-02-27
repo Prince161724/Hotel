@@ -9,6 +9,7 @@ const Alert = () => {
 
   return (<>
     {/* {console.log("alert.showAlert in alert is ",alert.showAlert)} */}
+    {/*Cant i use it Huh...*/}
     <div
       style={{
         position: "fixed",
